@@ -18,6 +18,9 @@ docker build -t $REPO:centos7-mate -f ./centos7-mate/Dockerfile .
 wait
 docker build -t $REPO:centos7-xfce -f ./centos7-xfce/Dockerfile .
 wait
+docker build -t $REPO:centos7-xfce_uirecorder -f ./centos7-xfce_uirecorder/Dockerfile .
+// docker run --restart always  --shm-size=3g  --name xfce  --privileged  -d -p 3389:3389 xfce_uirecorder 
+wait
 #docker build -t $REPO:centos8-mate -f ./centos8-mate/Dockerfile .
 wait
 docker build -t $REPO:centos8-xfce -f ./centos8-xfce/Dockerfile .
