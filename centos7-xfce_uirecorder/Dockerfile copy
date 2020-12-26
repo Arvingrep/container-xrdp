@@ -1,7 +1,8 @@
 # https://github.com/danchitnis/container-xrdp
 
 FROM centos:7
-RUN yum -y update
+#更新依赖
+RUN yum -y update 
 
 # 下载chrome 
 RUN yum install kde-l10n-Chinese glibc-common git wget -y  \
@@ -13,27 +14,26 @@ RUN curl -sL https://rpm.nodesource.com/setup_10.x |  bash - \
     && yum install  nodejs -y \
     && npm install uirecorder mocha macaca-reporter -g --force --allow-root --unsafe-perm
 
-# 配置xrdp
-RUN bash -c 'echo PREFERRED=/usr/bin/xfce4-session > /etc/sysconfig/desktop' \
-    && yum -y install epel-release \
-    && yum -y groupinstall xfce \
-    && yum install -y xrdp xorgxrdp \
-    && yum -y install  sudo nload passwd nano
 
-WORKDIR  /etc/xrdp
+RUN bash -c 'echo PREFERRED=/usr/bin/xfce4-session > /etc/sysconfig/desktop'
+
+RUN yum -y install epel-release groupinstall xfce  xrdp xorgxrdp sudo nload passwd nano
+
+
+# 配置xrdp
+
+WORKDIR /etc/xrdp
 COPY ./build/* ./
 
 RUN mv ./startwm-xfce.sh ./startwm.sh \
-    && chmod a+x ./startwm.sh  ./run.sh ./adduser.sh ./Run.sh \
-    && bash ./adduser.sh 
+    && ./centos8-sesman.ini ./xrdp.ini
 
-# 安装vscode
-RUN bash -c 'rpm --import https://packages.microsoft.com/keys/microsoft.asc' \
-    && bash -c ' cat ./vscode > /etc/yum.repos.d/vscode.repo ' \
-    && yum install code -y 
+RUN chmod a+x ./startwm.sh \
+    && chmod +x ./adduser.sh \
+    && chmod +x ./Run.sh
 
 #设置环境为zh_CN
-RUN yum install -y cjkuni* fcitx \
+RUN yum install -y fcitx \
     && localedef -c -f UTF-8 -i zh_CN zh_CN.utf8 \
     && export LANG=zh_CN.UTF-8 \
     &&  echo "export LANG=zh_CN.UTF-8" >> /etc/locale.conf
@@ -42,4 +42,6 @@ ENV LC_ALL zh_CN.UTF-8
 
 EXPOSE 3389
 
-ENTRYPOINT ["./Run.sh"]
+ENTRYPOINT ["./adduser.sh"]
+
+CMD ["sh","-c","./Run.sh"]
