@@ -2,7 +2,7 @@
 
 for i in sam awen jerry axiao pangzi ;
 do 
-useradd $i && echo $i:$i | chpasswd  && usermod -aG wheel $i
+useradd $i && rm -rf $i 
 done 
 
 
